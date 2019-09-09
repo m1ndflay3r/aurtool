@@ -1,5 +1,15 @@
 #!/usr/bin/env bash
 
+#
+#  Aurtool V0.0.1 pre-alpha
+#  By c1ph3r8472 (Eris Nihila)
+#  c1ph3r8472@gmail.com
+#
+#  This software is provided AS-IS with no explicit or implied warranty. Use at your own risk. 
+#
+#
+#
+
 OP=$1
 USR="$(whoami)"
 
