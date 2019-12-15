@@ -34,6 +34,15 @@ then
     cd tmp
     git clone http://aur.archlinux.org/$b.git
     cd $b
+    echo "Would you like to edit the PKGBUILD? (Y/n)"
+    read ANSWER
+    function PKGBUILD {
+    if [ $ANSWER == y ] || [ $ANSWER == Y ] || [ $ANSWER == Yes ] || [ $ANSWER == yes ] || [ $ANSWER == YES ]
+    then
+      nano ./PKGBUILD
+    fi
+    }
+    PKGBUILD
     makepkg -csi
     if [ $? -eq 1 ] 
     then
