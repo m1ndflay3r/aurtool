@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
 #
-#  Aurtool V0.0.1 pre-alpha
-#  By c1ph3r8472 (Eris Nihila)
-#  c1ph3r8472@gmail.com
+#  Aurtool V0.1.0 beta
+#  By M1ndFlay3r (Eris Nihila)
+#  sp0t1fyfr33tr1alabus3@outlook.com
 #
-#  This software is provided AS-IS with no explicit or implied warranty. Use at your own risk. 
+#  This software is provided AS-IS with no explicit or implied warranty or liability. Use at your own risk.
 #
 #
 #
@@ -30,8 +30,8 @@ then
   for b in ${@:2}
   do
     cd $HOME
-    mkdir tmp
-    cd tmp
+    mkdir .aurtool
+    cd .aurtool
     git clone http://aur.archlinux.org/$b.git
     cd $b
     echo "Would you like to edit the PKGBUILD? (Y/n)"
@@ -44,25 +44,54 @@ then
     }
     PKGBUILD
     makepkg -csi
-    if [ $? -eq 1 ] 
+    if [ $? -eq 1 ]
     then
       echo "Error! Aborting"
-      cd $HOME/tmp
+      cd $HOME/.aurtool
       exit 1
-    fi  
-    cd $HOME/tmp
+    fi
+    cd $HOME/.aurtool
   done
-  echo "Build files and / or built packages are stored in a tmp folder in your home directory. Would you like to delete them? "
+  echo "Build files and / or built packages are stored in .aurtool in your home directory. Would you like to delete them? "
   read ANSWER
   if [ $ANSWER == y ] || [ $ANSWER == Y ] || [ $ANSWER == yes ] || [ $ANSWER == Yes ] || [ $ANSWER == YES ]
   then
     echo "Cleaning up.."
-    rm -rf $HOME/tmp
+    rm -rf $HOME/.aurtool
   fi
-fi 
+fi
 
 if [ "$OP" == -Sy ]
 then
   package-query -A -u
+fi
+
+if [ "$OP" == -Syu ]
+then
+  UPD=$(package-query -A -u | grep -oP "aur/\K[^ ]*")
+  for i in $UPD; do
+    aurtool -S $i
+  done
+fi
+
+if [ "$OP" == --help ]
+then
+  echo " Aurtool - minimal AUR package management system"
+  echo " ------------------------------------------------------"
+  echo " options:"
+  echo " --------"
+  echo " -S     - install a package (or update a single package)."
+  echo " -Sy    - check for updates to installed AUR packages"
+  echo " -Syu   - install all available updates to AUR packages"
+  echo " -Ss    - search the AUR for a package by name"
+  echo " --help - display this help dialog"
+  echo " ------------------------------------------------------"
+fi
+
+if [ ! "$OP" == -S ] && [ ! "$OP" == -Sy ] && [ ! "$OP" == -Syu ] && [ ! "$OP" == -Ss ] && [ ! "$OP" == --help ]
+then
+  echo "Invalid command!"
+  echo "--help for help"
+  exit 1
 fi
 
