@@ -75,6 +75,14 @@ then
   done
 fi
 
+if [ "$OP" == -Syyu ]
+then
+  echo "Updating AUR packages..."
+  aurtool -Syu
+  echo "Updating non-AUR packages..."
+  sudo pacman -Syu
+fi
+
 if [ "$OP" == --help ]
 then
   echo " Aurtool - minimal AUR package management system"
@@ -84,12 +92,13 @@ then
   echo " -S     - install a package (or update a single package)."
   echo " -Sy    - check for updates to installed AUR packages"
   echo " -Syu   - install all available updates to AUR packages"
+  echo " -Syyu  - install all available updates to both AUR and non-AUR packages"
   echo " -Ss    - search the AUR for a package by name"
   echo " --help - display this help dialog"
   echo " ------------------------------------------------------"
 fi
 
-if [ ! "$OP" == -S ] && [ ! "$OP" == -Sy ] && [ ! "$OP" == -Syu ] && [ ! "$OP" == -Ss ] && [ ! "$OP" == --help ]
+if [ ! "$OP" == -S ] && [ ! "$OP" == -Sy ] && [ ! "$OP" == -Syu ] && [ ! "$OP" == -Ss ] && [ ! "$OP" == --help ] && [ ! "$OP" == -Syyu ]
 then
   echo "Invalid command!"
   echo "--help for help"
