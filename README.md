@@ -16,16 +16,12 @@ Simple bash based aur management utility.
 
 <h5>step 1</h5>
 
-
-.
 - clone this repository:
 
 - ``` git clone https://github.com/m1ndflay3r/aurtool ```
 
 
-.
 <h5>step 2</h5>
-
 
 - cp aurtool to any location in your PATH, and mark it as executable
 
@@ -34,16 +30,13 @@ Simple bash based aur management utility.
 - ``` chmod 755 /bin/aurtool ```
 
 
-.
 <h5>step 3</h5>
-
 
 - install package-query to enable all functions of aurtool and prevent strange issues
 
 - ``` aurtool -S package-query ```
 
 
-.
 <h4>Usage:</h4>
 
 
