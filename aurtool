@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 #
-#  Aurtool V0.1.1 beta
+#  Aurtool V0.1.2 beta
 #  
 #  Maintainer: Eris Nihila (M1ndFlay3r)
 #              sp0t1fyfr33tr1alabus3@outlook.com
@@ -15,21 +15,17 @@ OP=$1
 USR="$(whoami)"
 
 
-if [ "$USR" == root ]
-then
+if [ "$USR" == root ]; then
   echo "Error: aurtool cannot be run as root!"
   exit 1
 fi
 
-if [ "$OP" == -Ss ]
-then
+if [ "$OP" == -Ss ]; then
   package-query -A -s ${@:2}
 fi
 
-if [ "$OP" == -S ]
-then
-  for b in ${@:2}
-  do
+if [ "$OP" == -S ]; then
+  for b in ${@:2}; do
     cd $HOME
     mkdir .aurtool
     cd .aurtool
@@ -38,15 +34,13 @@ then
     echo "Would you like to edit the PKGBUILD? (Y/n)"
     read ANSWER
     function PKGBUILD {
-    if [ $ANSWER == y ] || [ $ANSWER == Y ] || [ $ANSWER == Yes ] || [ $ANSWER == yes ] || [ $ANSWER == YES ]
-    then
+    if [ $ANSWER == y ] || [ $ANSWER == Y ] || [ $ANSWER == Yes ] || [ $ANSWER == yes ] || [ $ANSWER == YES ]; then
       nano ./PKGBUILD
     fi
     }
     PKGBUILD
     makepkg -csi
-    if [ $? -eq 1 ]
-    then
+    if [ $? -eq 1 ]; then
       echo "Error! Aborting"
       cd $HOME/.aurtool
       exit 1
@@ -55,36 +49,31 @@ then
   done
   echo "Build files and / or built packages are stored in .aurtool in your home directory. Would you like to delete them? "
   read ANSWER
-  if [ $ANSWER == y ] || [ $ANSWER == Y ] || [ $ANSWER == yes ] || [ $ANSWER == Yes ] || [ $ANSWER == YES ]
-  then
+  if [ $ANSWER == y ] || [ $ANSWER == Y ] || [ $ANSWER == yes ] || [ $ANSWER == Yes ] || [ $ANSWER == YES ]; then
     echo "Cleaning up.."
     rm -rf $HOME/.aurtool
   fi
 fi
 
-if [ "$OP" == -Sy ]
-then
+if [ "$OP" == -Sy ]; then
   package-query -A -u
 fi
 
-if [ "$OP" == -Syu ]
-then
+if [ "$OP" == -Syu ]; then
   UPD=$(package-query -A -u | grep -oP "aur/\K[^ ]*")
   for i in $UPD; do
     aurtool -S $i
   done
 fi
 
-if [ "$OP" == -Syyu ]
-then
+if [ "$OP" == -Syyu ]; then
   echo "Updating AUR packages..."
   aurtool -Syu
   echo "Updating non-AUR packages..."
   sudo pacman -Syu
 fi
 
-if [ "$OP" == --help ]
-then
+if [ "$OP" == --help ]; then
   echo " Aurtool - minimal AUR package management system"
   echo " ------------------------------------------------------"
   echo " options:"
@@ -98,8 +87,7 @@ then
   echo " ------------------------------------------------------"
 fi
 
-if [ ! "$OP" == -S ] && [ ! "$OP" == -Sy ] && [ ! "$OP" == -Syu ] && [ ! "$OP" == -Ss ] && [ ! "$OP" == --help ] && [ ! "$OP" == -Syyu ]
-then
+if [ ! "$OP" == -S ] && [ ! "$OP" == -Sy ] && [ ! "$OP" == -Syu ] && [ ! "$OP" == -Ss ] && [ ! "$OP" == --help ] && [ ! "$OP" == -Syyu ]; then
   echo "Invalid command!"
   echo "--help for help"
   exit 1
