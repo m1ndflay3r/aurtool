@@ -99,7 +99,7 @@ if [ "$OP" == --help ]; then
   echo " ------------------------------------------------------"
 fi
 
-if [ ! "$OP" == -S ] && [ ! "$OP" == -Sy ] && [ ! "$OP" == -Syu ] && [ ! "$OP" == -Ss ] && [ ! "$OP" == --help ] && [ ! "$OP" == -Syyu ]; then
+if [ ! "$OP" == -S ] && [ ! "$OP" == -Sy ] && [ ! "$OP" == -Syu ] && [ ! "$OP" == -Ss ] && [ ! "$OP" == --help ] && [ ! "$OP" == -Syyu ] && [ ! "$OP" == -Sss ]; then
   echo "Invalid command!"
   echo "--help for help"
   exit 1
