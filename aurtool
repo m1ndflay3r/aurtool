@@ -24,6 +24,17 @@ if [ "$OP" == -Ss ]; then
   package-query -A -s ${@:2}
 fi
 
+if [ "$OP" == -Sss]; then
+  echo "-"
+  echo "Non-AUR"
+  echo "-"
+  pacman -Ss ${@:2}
+  echo "-"
+  echo "AUR"
+  echo "-"
+  package-query -A -s ${@:2}
+fi
+
 if [ "$OP" == -S ]; then
   for b in ${@:2}; do
     cd $HOME
@@ -83,6 +94,7 @@ if [ "$OP" == --help ]; then
   echo " -Syu   - install all available updates to AUR packages"
   echo " -Syyu  - install all available updates to both AUR and non-AUR packages"
   echo " -Ss    - search the AUR for a package by name"
+  echo " -Sss   - search both repositories and AUR for package by name"
   echo " --help - display this help dialog"
   echo " ------------------------------------------------------"
 fi
