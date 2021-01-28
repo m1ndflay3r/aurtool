@@ -42,6 +42,12 @@ if [ "$OP" == -S ]; then
     cd .aurtool
     git clone http://aur.archlinux.org/$b.git
     cd $b
+    PKGB=./PKGBUILD
+    if [ ! -f $PKGB ]; then
+      echo "Error: package does not exist by the name $b!"
+      echo "Aborting"
+      exit 1
+    fi
     echo "Would you like to edit the PKGBUILD? (Y/n)"
     read ANSWER
     function PKGBUILD {
