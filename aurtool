@@ -24,7 +24,7 @@ if [ "$OP" == -Ss ]; then
   package-query -A -s ${@:2}
 fi
 
-if [ "$OP" == -Sss]; then
+if [ "$OP" == -Sss ]; then
   echo "-"
   echo "Non-AUR"
   echo "-"
