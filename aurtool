@@ -52,7 +52,21 @@ if [ "$OP" == -S ]; then
     read ANSWER
     function PKGBUILD {
     if [ $ANSWER == y ] || [ $ANSWER == Y ] || [ $ANSWER == Yes ] || [ $ANSWER == yes ] || [ $ANSWER == YES ]; then
-      nano ./PKGBUILD
+      if which nano &> /dev/null; then
+        nano ./PKGBUILD
+      else
+        if which vim &> /dev/null; then
+          vim ./PKGBUILD
+        else
+          echo "No suitable text editor found!"
+          echo "If one is present on the system, enter its command now (eg: nano, vim, emacs, etc). Otherwise leave blank to skip PKGBUILD editing."
+          unset PKGEDIT
+          read PKGEDIT
+          if [ -v $PKGEDIT ]; then 
+            $PKGEDIT ./PKGBUILD
+          fi
+        fi
+      fi
     fi
     }
     PKGBUILD
