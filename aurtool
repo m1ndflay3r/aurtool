@@ -105,10 +105,10 @@ if [ "$OP" == -Syu ]; then
 fi
 
 if [ "$OP" == -Syyu ]; then
-  echo "Updating AUR packages..."
-  aurtool -Syu
   echo "Updating non-AUR packages..."
   sudo pacman -Syu
+  echo "Updating AUR packages..."
+  aurtool -Syu
 fi
 
 if [ "$OP" == --version ]; then
