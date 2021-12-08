@@ -64,6 +64,15 @@ if [ "$USR" == root ]; then
   exit 1
 fi
 
+if ! which package-query &> /dev/null; then
+  echo "Error: package-query not found in PATH!"
+  if ! isyes "Install it now? (Y/n)"; then
+    exit 1
+  else
+    aurtool -S package-query
+  fi
+fi
+
 if [ "$OP" == -Ss ]; then
   if [ -z ${@:2} ]; then
     echo "Error: -Ss requires additional input."
