@@ -65,11 +65,16 @@ if [ "$USR" == root ]; then
 fi
 
 if ! which package-query &> /dev/null; then
-  echo "Error: package-query not found in PATH!"
-  if ! isyes "Install it now? (Y/n)"; then
-    exit 1
-  else
-    aurtool -S package-query
+  if [ -z "$PKGQUERYINS" ]; then
+    PKGQUERYINS="0"
+  fi
+  if [ ! $PKGQUERYINS == 1 ]; then
+    echo "Error: package-query not found in PATH!"
+    if ! isyes "Install it now? (Y/n)"; then
+      exit 1
+    else
+      PKGQUERYINS="1" aurtool -S package-query
+    fi
   fi
 fi
 
