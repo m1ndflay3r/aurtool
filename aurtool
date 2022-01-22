@@ -79,7 +79,7 @@ if ! which package-query &> /dev/null; then
 fi
 
 if [ "$OP" == -Ss ]; then
-  if [ -z ${@:2} ]; then
+  if [ -z "${@:2}" ]; then
     echo "Error: -Ss requires additional input."
     echo "aurtool --help for help page"
     exit 1
@@ -88,7 +88,7 @@ if [ "$OP" == -Ss ]; then
 fi
 
 if [ "$OP" == -Sss ]; then
-  if [ -z ${@:2} ]; then
+  if [ -z "${@:2}" ]; then
     echo "Error: -Sss requires additional input."
     echo "aurtool --help for help page"
     exit 1
@@ -104,7 +104,7 @@ if [ "$OP" == -Sss ]; then
 fi
 
 if [ "$OP" == -S ]; then
-  if [ -z ${@:2} ]; then
+  if [ -z "${@:2}" ]; then
     echo "Error: -S requires additional input."
     echo "aurtool --help for help page"
     exit 1
