@@ -42,7 +42,9 @@ function isyes {
 
 function isvalidresponse {
   if [ -z "$OP" ]; then
-    OP="NULL"
+    echo "Error: aurtool requires input!"
+    echo "Do aurtool --help for help page"
+    exit 1
   fi
   for i in "${VALID[@]}"; do
     if echo "$i" | grep "$OP" &> /dev/null; then
