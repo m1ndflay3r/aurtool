@@ -19,6 +19,7 @@
 #
 
 OP=$1
+OPINPUT="${@:2}"
 USR="$(whoami)"
 STARTDIR=$(pwd)
 PATH=$STARTDIR/${BASH_SOURCE%/*}:$PATH
@@ -81,7 +82,7 @@ if ! which package-query &> /dev/null; then
 fi
 
 if [ "$OP" == -Ss ]; then
-  if [ -z "${@:2}" ]; then
+  if [ -z "$OPINPUT" ]; then
     echo "Error: -Ss requires additional input."
     echo "aurtool --help for help page"
     exit 1
@@ -90,7 +91,7 @@ if [ "$OP" == -Ss ]; then
 fi
 
 if [ "$OP" == -Sss ]; then
-  if [ -z "${@:2}" ]; then
+  if [ -z "$OPINPUT" ]; then
     echo "Error: -Sss requires additional input."
     echo "aurtool --help for help page"
     exit 1
@@ -106,7 +107,7 @@ if [ "$OP" == -Sss ]; then
 fi
 
 if [ "$OP" == -S ]; then
-  if [ -z "${@:2}" ]; then
+  if [ -z "$OPINPUT" ]; then
     echo "Error: -S requires additional input."
     echo "aurtool --help for help page"
     exit 1
