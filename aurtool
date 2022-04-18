@@ -231,7 +231,7 @@ if [ "$OP" == -S ]; then
   fi
   if [ ! "$NODEL" == 1 ]; then
     if isyes "$(ctext yellow nnl "Build files and / or built packages are stored in .aurtool in your home directory. Would you like to delete them? (Y/n)")"; then
-      ctext cyan std "Cleaning up.."
+      ctext yellow std "Cleaning up.."
       rm -rf $HOME/.aurtool
     fi
   fi
@@ -244,7 +244,7 @@ fi
 if [ "$OP" == -Syu ]; then
   UPD=$(package-query -A -u | grep -oP "aur/\K[^ ]*")
   if [ -z "$UPD" ]; then
-    ctext yellow std "There is nothing to do"
+    ctext magenta std "There is nothing to do"
     exit 0
   fi
   for i in $UPD; do
@@ -260,21 +260,21 @@ if [ "$OP" == -Syyu ]; then
 fi
 
 if [ "$OP" == --version ]; then
-  ctext cyan std "aurtool V0.3 beta"
+  ctext yellow std "aurtool V0.3 beta"
 fi
 
 if [ "$OP" == --help ]; then
-  ctext cyan std " Aurtool - minimal AUR package management system"
-  ctext cyan std " ------------------------------------------------------"
-  ctext cyan std " options:"
-  ctext cyan std " --------"
-  ctext cyan std " -S     - install a package (or update a single package)."
-  ctext cyan std " -Sy    - check for updates to installed AUR packages"
-  ctext cyan std " -Syu   - install all available updates to AUR packages"
-  ctext cyan std " -Syyu  - install all available updates to both AUR and non-AUR packages"
-  ctext cyan std " -Ss    - search the AUR for a package by name"
-  ctext cyan std " -Sss   - search both repositories and AUR for package by name"
-  ctext cyan std " --help - display this help dialog"
-  ctext cyan std " ------------------------------------------------------"
+  ctext yellow std " Aurtool - minimal AUR package management system"
+  ctext yellow std " ------------------------------------------------------"
+  ctext yellow std " options:"
+  ctext yellow std " --------"
+  ctext yellow std " -S     - install a package (or update a single package)."
+  ctext yellow std " -Sy    - check for updates to installed AUR packages"
+  ctext yellow std " -Syu   - install all available updates to AUR packages"
+  ctext yellow std " -Syyu  - install all available updates to both AUR and non-AUR packages"
+  ctext yellow std " -Ss    - search the AUR for a package by name"
+  ctext yellow std " -Sss   - search both repositories and AUR for package by name"
+  ctext yellow std " --help - display this help dialog"
+  ctext yellow std " ------------------------------------------------------"
 fi
 
