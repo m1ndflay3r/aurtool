@@ -119,7 +119,7 @@ if ! which package-query &> /dev/null; then
   fi
   if [ ! $PKGQUERYINS == 1 ]; then
     ctext magenta std "Error: package-query not found in PATH!"
-    if ! isyes "$(ctext yellow nnl "Install it now? (Y/n) ")"; then
+    if ! isyes "$(ctext yellow nnl "Install it now? (Y/n)")"; then
       exit 1
     else
       PKGQUERYINS="1" aurtool -S package-query
@@ -174,7 +174,7 @@ if [ "$OP" == -S ]; then
     # Yes, this is a pointless function that uses up 3 lines unnecessarily. The script didn't behave properly without it. Bash has moods, and Brian Fox hates us all.
     #
     function PKGBUILD {
-    if isyes "$(ctext yellow nnl "Would you like to edit the PKGBUILD? (Y/n) ")"; then
+    if isyes "$(ctext yellow nnl "Would you like to edit the PKGBUILD? (Y/n)")"; then
       if which nano &> /dev/null; then
         nano ./PKGBUILD
       else
