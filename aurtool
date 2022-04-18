@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 #
-#  Aurtool V0.2 beta
+#  Aurtool V0.3 beta
 #
 #  Maintainer: Eris Nihila (M1ndFlay3r)
 #              sp0t1fyfr33tr1alabus3@outlook.com
@@ -25,35 +25,6 @@ STARTDIR=$(pwd)
 PATH=$STARTDIR/${BASH_SOURCE%/*}:$PATH
 
 # library functions borrowed from lemonlib
-function isyes {
-  if [ ! -z "$1" ]; then
-    read -p "$1  " ANSWER
-  else
-    read ANSWER
-  fi
-  if [ -z "$ANSWER" ]; then
-    ANSWER="y"
-  fi
-  if [ $ANSWER == y ] || [ $ANSWER == Y ] || [ $ANSWER == yes ] || [ $ANSWER == Yes ] || [ $ANSWER == YES ]; then
-    yes=0 && return 0
-  else
-    yes=1 && return 1
-  fi
-}
-
-function isvalidresponse {
-  if [ -z "$OP" ]; then
-    echo "Error: aurtool requires input!"
-    echo "Do aurtool --help for help page"
-    exit 1
-  fi
-  for i in "${VALID[@]}"; do
-    if echo "$i" | grep "$OP" &> /dev/null; then
-      return 0
-    fi
-  done
-}
-
 function ctext {
   # Set colour from $1
   if [ "$1" == black ]; then
@@ -100,16 +71,45 @@ function ctext {
   fi
 }
 
+function isyes {
+  if [ ! -z "$1" ]; then
+    read -p "$1  " ANSWER
+  else
+    read ANSWER
+  fi
+  if [ -z "$ANSWER" ]; then
+    ANSWER="y"
+  fi
+  if [ $ANSWER == y ] || [ $ANSWER == Y ] || [ $ANSWER == yes ] || [ $ANSWER == Yes ] || [ $ANSWER == YES ]; then
+    yes=0 && return 0
+  else
+    yes=1 && return 1
+  fi
+}
+
+function isvalidresponse {
+  if [ -z "$OP" ]; then
+    ctext red std "Error: aurtool requires input!"
+    ctext yellow std "Do aurtool --help for help page"
+    exit 1
+  fi
+  for i in "${VALID[@]}"; do
+    if echo "$i" | grep "$OP" &> /dev/null; then
+      return 0
+    fi
+  done
+}
+
 # script body
 VALID=("-S" "-Sy" "-Syu" "-Ss" "--help" "-Syyu" "-Sss" "--version")
 if ! isvalidresponse; then
-  echo "Invalid command!"
-  echo "--help for help"
+  ctext red std "Invalid command!"
+  ctext yellow std "Do aurtool --help for help page"
   exit 1
 fi
 
 if [ "$USR" == root ]; then
-  echo "Error: aurtool cannot be run as root!"
+  ctext red std "Error: aurtool cannot be run as root!"
   exit 1
 fi
 
@@ -118,8 +118,8 @@ if ! which package-query &> /dev/null; then
     PKGQUERYINS="0"
   fi
   if [ ! $PKGQUERYINS == 1 ]; then
-    echo "Error: package-query not found in PATH!"
-    if ! isyes "Install it now? (Y/n)"; then
+    ctext magenta std "Error: package-query not found in PATH!"
+    if ! isyes "$(ctext yellow nnl "Install it now? (Y/n) ")"; then
       exit 1
     else
       PKGQUERYINS="1" aurtool -S package-query
@@ -129,8 +129,8 @@ fi
 
 if [ "$OP" == -Ss ]; then
   if [ -z "$OPINPUT" ]; then
-    echo "Error: -Ss requires additional input."
-    echo "aurtool --help for help page"
+    ctext red std "Error: -Ss requires additional input."
+    ctext yellow std "aurtool --help for help page"
     exit 1
   fi
   package-query -A -s ${@:2}
@@ -138,24 +138,24 @@ fi
 
 if [ "$OP" == -Sss ]; then
   if [ -z "$OPINPUT" ]; then
-    echo "Error: -Sss requires additional input."
-    echo "aurtool --help for help page"
+    ctext red std "Error: -Sss requires additional input."
+    ctext yellow std "aurtool --help for help page"
     exit 1
   fi
-  echo "-"
-  echo "Non-AUR"
-  echo "-"
+  ctext yellow std "-"
+  ctext yellow std "Non-AUR"
+  ctext yellow std "-"
   pacman -Ss ${@:2}
-  echo "-"
-  echo "AUR"
-  echo "-"
+  ctext yellow std "-"
+  ctext yellow std "AUR"
+  ctext yellow std "-"
   package-query -A -s ${@:2}
 fi
 
 if [ "$OP" == -S ]; then
   if [ -z "$OPINPUT" ]; then
-    echo "Error: -S requires additional input."
-    echo "aurtool --help for help page"
+    ctext red std "Error: -S requires additional input."
+    ctext yellow std "aurtool --help for help page"
     exit 1
   fi
   for b in ${@:2}; do
@@ -166,23 +166,23 @@ if [ "$OP" == -S ]; then
     cd $b
     PKGB=./PKGBUILD
     if [ ! -f $PKGB ]; then
-      echo "Error: package does not exist by the name $b!"
-      echo "Aborting"
+      ctext red std "Error: package does not exist by the name $b!"
+      ctext magenta std "Aborting"
       exit 1
     fi
     #
     # Yes, this is a pointless function that uses up 3 lines unnecessarily. The script didn't behave properly without it. Bash has moods, and Brian Fox hates us all.
     #
     function PKGBUILD {
-    if isyes "Would you like to edit the PKGBUILD? (Y/n)" ; then
+    if isyes "$(ctext yellow nnl "Would you like to edit the PKGBUILD? (Y/n) ")"; then
       if which nano &> /dev/null; then
         nano ./PKGBUILD
       else
         if which vim &> /dev/null; then
           vim ./PKGBUILD
         else
-          echo "No suitable text editor found!"
-          echo "If one is present on the system, enter its command now (eg: nano, vim, emacs, etc). Otherwise leave blank to skip PKGBUILD editing."
+          ctext magenta std "No suitable text editor found!"
+          ctext yellow nnl "If one is present on the system, enter its command now (eg: nano, vim, emacs, etc). Otherwise leave blank to skip PKGBUILD editing: "
           read PKGEDIT
           if [ -z "$PKGEDIT" ]; then
             PKGEDIT="NULL"
@@ -208,19 +208,19 @@ if [ "$OP" == -S ]; then
     done
     for i in ${DEPS[@]}; do
       if ! pacman -Ql $i &> /dev/null; then
-        echo "Trying to install $i with pacman (dependency)"
+        ctext yellow std "Trying to install $i with pacman (dependency)"
         if ! sudo pacman -S --noconfirm --needed $i; then
-          echo "Installing $i with pacman failed"
-          echo "Trying to install $i from AUR"
+          ctext magenta std "Installing $i with pacman failed"
+          ctext yellow std "Trying to install $i from AUR"
           if ! NODEL=1 aurtool -S $i; then
-            echo "FATAL: Unable to install dependency $i!"
+            ctext red std "FATAL: Unable to install dependency $i!"
             exit 1
           fi
         fi
       fi
     done
     if ! makepkg -csi; then
-      echo "Error! Aborting"
+      ctext red std "Error! Aborting"
       cd $HOME
       exit 1
     fi
@@ -230,8 +230,8 @@ if [ "$OP" == -S ]; then
     NODEL="0"
   fi
   if [ ! "$NODEL" == 1 ]; then
-    if isyes "Build files and / or built packages are stored in .aurtool in your home directory. Would you like to delete them? (Y/n)"; then
-      echo "Cleaning up.."
+    if isyes "$(ctext yellow nnl "Build files and / or built packages are stored in .aurtool in your home directory. Would you like to delete them? (Y/n)")"; then
+      ctext cyan std "Cleaning up.."
       rm -rf $HOME/.aurtool
     fi
   fi
@@ -244,7 +244,7 @@ fi
 if [ "$OP" == -Syu ]; then
   UPD=$(package-query -A -u | grep -oP "aur/\K[^ ]*")
   if [ -z "$UPD" ]; then
-    echo "There is nothing to do"
+    ctext yellow std "There is nothing to do"
     exit 0
   fi
   for i in $UPD; do
@@ -253,28 +253,28 @@ if [ "$OP" == -Syu ]; then
 fi
 
 if [ "$OP" == -Syyu ]; then
-  echo "Updating non-AUR packages..."
+  ctext yellow std "Updating non-AUR packages..."
   sudo pacman -Syu
-  echo "Updating AUR packages..."
+  ctext yellow std "Updating AUR packages..."
   aurtool -Syu
 fi
 
 if [ "$OP" == --version ]; then
-  echo "aurtool V0.2 beta"
+  ctext cyan std "aurtool V0.3 beta"
 fi
 
 if [ "$OP" == --help ]; then
-  echo " Aurtool - minimal AUR package management system"
-  echo " ------------------------------------------------------"
-  echo " options:"
-  echo " --------"
-  echo " -S     - install a package (or update a single package)."
-  echo " -Sy    - check for updates to installed AUR packages"
-  echo " -Syu   - install all available updates to AUR packages"
-  echo " -Syyu  - install all available updates to both AUR and non-AUR packages"
-  echo " -Ss    - search the AUR for a package by name"
-  echo " -Sss   - search both repositories and AUR for package by name"
-  echo " --help - display this help dialog"
-  echo " ------------------------------------------------------"
+  ctext cyan std " Aurtool - minimal AUR package management system"
+  ctext cyan std " ------------------------------------------------------"
+  ctext cyan std " options:"
+  ctext cyan std " --------"
+  ctext cyan std " -S     - install a package (or update a single package)."
+  ctext cyan std " -Sy    - check for updates to installed AUR packages"
+  ctext cyan std " -Syu   - install all available updates to AUR packages"
+  ctext cyan std " -Syyu  - install all available updates to both AUR and non-AUR packages"
+  ctext cyan std " -Ss    - search the AUR for a package by name"
+  ctext cyan std " -Sss   - search both repositories and AUR for package by name"
+  ctext cyan std " --help - display this help dialog"
+  ctext cyan std " ------------------------------------------------------"
 fi
 
