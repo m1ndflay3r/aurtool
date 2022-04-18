@@ -264,17 +264,18 @@ if [ "$OP" == --version ]; then
 fi
 
 if [ "$OP" == --help ]; then
-  ctext yellow std " Aurtool - minimal AUR package management system"
   ctext yellow std " ------------------------------------------------------"
-  ctext yellow std " options:"
-  ctext yellow std " --------"
-  ctext yellow std " -S     - install a package (or update a single package)."
-  ctext yellow std " -Sy    - check for updates to installed AUR packages"
-  ctext yellow std " -Syu   - install all available updates to AUR packages"
-  ctext yellow std " -Syyu  - install all available updates to both AUR and non-AUR packages"
-  ctext yellow std " -Ss    - search the AUR for a package by name"
-  ctext yellow std " -Sss   - search both repositories and AUR for package by name"
-  ctext yellow std " --help - display this help dialog"
+  ctext yellow std "     Aurtool - minimal AUR package management system   "
+  ctext yellow std " ------------------------------------------------------"
+  ctext yellow std "  options:"
+  ctext yellow std "  --------"
+  ctext yellow std "  -S     - install a package (or update a single package)."
+  ctext yellow std "  -Sy    - check for updates to installed AUR packages"
+  ctext yellow std "  -Syu   - install all available updates to AUR packages"
+  ctext yellow std "  -Syyu  - install all available updates to both AUR and non-AUR packages"
+  ctext yellow std "  -Ss    - search the AUR for a package by name"
+  ctext yellow std "  -Sss   - search both repositories and AUR for package by name"
+  ctext yellow std "  --help - display this help dialog"
   ctext yellow std " ------------------------------------------------------"
 fi
 
