@@ -24,7 +24,7 @@ USR="$(whoami)"
 STARTDIR=$(pwd)
 PATH=$STARTDIR/${BASH_SOURCE%/*}:$PATH
 
-#library functions borrowed from lemonlib
+# library functions borrowed from lemonlib
 function isyes {
   if [ ! -z "$1" ]; then
     read -p "$1  " ANSWER
@@ -54,7 +54,53 @@ function isvalidresponse {
   done
 }
 
-#script body
+function ctext {
+  # Set colour from $1
+  if [ "$1" == black ]; then
+    tput setaf 0
+  fi
+  if [ "$1" == red ]; then
+    tput setaf 1
+  fi
+  if [ "$1" == green ]; then
+    tput setaf 2
+  fi
+  if [ "$1" == yellow ]; then
+    tput setaf 3
+  fi
+  if [ "$1" == blue ]; then
+    tput setaf 4
+  fi
+  if [ "$1" == magenta ]; then
+    tput setaf 5
+  fi
+  if [ "$1" == cyan ]; then
+    tput setaf 6
+  fi
+  if [ "$1" == white ]; then
+    tput setaf 7
+  fi
+  if [ "$1" == reset ]; then
+    tput sgr 0
+  fi
+  # text method from $2
+  if [ "$2" == std ]; then
+    echo "${@:3}"
+    tput sgr 0
+  fi
+  if [ "$2" == nnl ]; then
+    echo -n "${@:3}"
+    tput sgr 0
+  fi
+  if [ "$2" == std,nres ]; then
+    echo "${@:3}"
+  fi
+  if [ "$2" == nnl,nres ]; then
+    echo -n "${@:3}"
+  fi
+}
+
+# script body
 VALID=("-S" "-Sy" "-Syu" "-Ss" "--help" "-Syyu" "-Sss" "--version")
 if ! isvalidresponse; then
   echo "Invalid command!"
