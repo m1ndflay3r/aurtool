@@ -120,7 +120,7 @@ function isvalidresponse {
   if [ -z "$OP" ]; then
     ctext red std "Error: aurtool requires input!"
     ctext yellow std "Do aurtool --help for help page"
-    exit 1
+    exit 22
   fi
   for i in "${VALID[@]}"; do
     if echo "$i" | grep "$OP" &> /dev/null; then
@@ -134,12 +134,12 @@ VALID=("-S" "-Sy" "-Syu" "-Ss" "--help" "-Syyu" "-Sss" "--version" "-SS" "-R")
 if ! isvalidresponse; then
   ctext red std "Invalid command!"
   ctext yellow std "Do aurtool --help for help page"
-  exit 1
+  exit 22
 fi
 
 if [ "$USR" == root ]; then
   ctext red std "Error: aurtool cannot be run as root!"
-  exit 1
+  exit 13
 fi
 
 if ! which package-query &> /dev/null; then
@@ -149,7 +149,7 @@ if ! which package-query &> /dev/null; then
   if [ ! $PKGQUERYINS == 1 ]; then
     ctext magenta std "Error: package-query not found in PATH!"
     if ! isyes "$(ctext yellow nnl "Install it now? (Y/n)")"; then
-      exit 1
+      exit 65
     else
       PKGQUERYINS="1" aurtool -S package-query
     fi
@@ -160,7 +160,7 @@ function OPERROR {
   if [ -z "$OPINPUT" ]; then
     ctext red std "Error: $OP requires additional input."
     ctext yellow std "aurtool --help for help page"
-    exit 1
+    exit 22
   fi
 }
 
@@ -211,7 +211,7 @@ if [ "$OP" == -S ]; then
         ctext red std "Error: package does not exist by the name $b!"
         ctext magenta std "Aborting"
         cd $HOME
-        exit 1
+        exit 6
       fi
       #
       # Yes, this is a pointless function that uses up 3 lines unnecessarily. The script didn't behave properly without it. Bash has moods, and Brian Fox hates us all.
@@ -258,7 +258,7 @@ if [ "$OP" == -S ]; then
             if ! NODEL="1" NCHECKALL="1" aurtool -S $i; then
               ctext red std "FATAL: Unable to install dependency $i!"
               cd $HOME
-              exit 1
+              exit 65
             fi
           fi
         fi
@@ -266,7 +266,7 @@ if [ "$OP" == -S ]; then
       if ! makepkg -csi; then
         ctext red std "Error! Aborting"
         cd $HOME
-        exit 1
+        exit 131
       fi
       cd $HOME/.aurtool
     done
@@ -281,9 +281,9 @@ if [ "$OP" == -S ]; then
       fi
     fi
   else
-    ctext magenta std "Aborting"
+    echo "Aborting"
     cd $HOME
-    exit 1
+    exit 125
   fi
 fi
 
@@ -308,9 +308,9 @@ if [ "$OP" == -Syu ]; then
       NCHECKALL="1" aurtool -S $i
     done
   else
-    ctext magenta std "Aborting"
+    echo "Aborting"
     cd $HOME
-    exit 1
+    exit 125
   fi
 fi
 
@@ -339,9 +339,9 @@ if [ "$OP" == -SS ]; then
       fi
     done
   else
-    ctext magenta std "Aborting"
+    echo "Aborting"
     cd $HOME
-    exit 1
+    exit 125
   fi
 fi
 
@@ -360,7 +360,7 @@ if [ "$OP" == -R ]; then
   else
     ctext magenta std "Aborting"
     cd $HOME
-    exit 1
+    exit 125
   fi
 fi
 
