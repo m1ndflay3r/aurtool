@@ -295,6 +295,7 @@ if [ "$OP" == -Syu ]; then
     echo "There is nothing to do"
     exit 0
   fi
+  echo " "
   for vV in $UPD; do
     ctext blue nnl "$vV "
   done
@@ -325,6 +326,7 @@ if [ "$OP" == -SS ]; then
     ctext blue nnl "$dD "
   done
   echo " "
+  echo " "
   if isyes "$(ctext yellow nnl "Install these packages? (Y/n)")"; then
     for m in ${@:2}; do
       ctext yellow std "Trying to install $m using pacman..."
@@ -347,6 +349,7 @@ if [ "$OP" == -R ]; then
   for dD in ${@:2}; do
     ctext blue nnl "$dD "
   done
+  echo " "
   echo " "
   if isyes "$(ctext yellow nnl "Remove these packages? (Y/n)")"; then
     for u in ${@:2}; do
