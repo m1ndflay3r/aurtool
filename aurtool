@@ -127,6 +127,7 @@ function isvalidresponse {
       return 0
     fi
   done
+  return 1
 }
 
 # script body
