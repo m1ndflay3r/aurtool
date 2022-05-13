@@ -23,8 +23,10 @@ OPINPUT="${@:2}"
 USR="$(whoami)"
 STARTDIR=$(pwd)
 PATH=$STARTDIR/${BASH_SOURCE%/*}:$PATH
-NCHECKALL="0"
 GOAHEAD="0"
+if [ -z "$NCHECKALL" ]; then
+  NCHECKALL="0"
+fi
 
 # library functions borrowed from lemonlib
 function ctext {
