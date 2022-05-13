@@ -124,15 +124,9 @@ function isvalidresponse {
   fi
   for i in "${VALID[@]}"; do
     if echo "$i" | grep "$OP" &> /dev/null; then
-      OPISVALID="0"
       return 0
-    else
-      OPISVALID="1"
     fi
   done
-  if [ $OPISVALID == "1" ]; then
-    return 1
-  fi
 }
 
 # script body
