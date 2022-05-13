@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 #
-#  Aurtool V0.4 beta
+#  Aurtool V0.5 beta
 #
 #  Maintainer: Eris Nihila (M1ndFlay3r)
 #              sp0t1fyfr33tr1alabus3@outlook.com
@@ -186,7 +186,7 @@ if [ "$OP" == -S ]; then
   if [ $NCHECKALL == 0 ]; then
     echo " "
     for dD in ${@:2}; do
-      ctext blue nnl "$dD "
+      ctext blue nnl " $dD"
     done
     echo " "
     echo " "
@@ -255,7 +255,7 @@ if [ "$OP" == -S ]; then
           if ! sudo pacman -S --noconfirm --needed $i; then
             ctext magenta std "Installing $i with pacman failed"
             ctext yellow std "Trying to install $i from AUR"
-            if ! NODEL=1 aurtool -S $i; then
+            if ! NODEL="1" NCHECKALL="1" aurtool -S $i; then
               ctext red std "FATAL: Unable to install dependency $i!"
               cd $HOME
               exit 1
@@ -299,7 +299,7 @@ if [ "$OP" == -Syu ]; then
   fi
   echo " "
   for vV in $UPD; do
-    ctext blue nnl "$vV "
+    ctext blue nnl " $vV"
   done
   echo " "
   echo " "
@@ -325,7 +325,7 @@ if [ "$OP" == -SS ]; then
   OPERROR
   echo " "
   for dD in ${@:2}; do
-    ctext blue nnl "$dD "
+    ctext blue nnl " $dD"
   done
   echo " "
   echo " "
@@ -349,7 +349,7 @@ if [ "$OP" == -R ]; then
   OPERROR
   echo " "
   for dD in ${@:2}; do
-    ctext blue nnl "$dD "
+    ctext blue nnl " $dD"
   done
   echo " "
   echo " "
@@ -365,7 +365,7 @@ if [ "$OP" == -R ]; then
 fi
 
 if [ "$OP" == --version ]; then
-  ctext yellow std "aurtool V0.4 beta"
+  ctext yellow std "aurtool V0.5 beta"
 fi
 
 if [ "$OP" == --help ]; then
