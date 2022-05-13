@@ -23,6 +23,8 @@ OPINPUT="${@:2}"
 USR="$(whoami)"
 STARTDIR=$(pwd)
 PATH=$STARTDIR/${BASH_SOURCE%/*}:$PATH
+NCHECKALL="0"
+GOAHEAD="0"
 
 # library functions borrowed from lemonlib
 function ctext {
@@ -179,12 +181,23 @@ fi
 
 if [ "$OP" == -S ]; then
   OPERROR
-  echo " "
-  for dD in ${@:2}; do
-    ctext blue nnl "$dD "
-  done
-  echo " "
-  if isyes "$(ctext yellow nnl "Install these packages? (Y/n)")"; then
+  if [ $NCHECKALL == 0 ]; then
+    echo " "
+    for dD in ${@:2}; do
+      ctext blue nnl "$dD "
+    done
+    echo " "
+    echo " "
+    if isyes "$(ctext yellow nnl "Install these packages? (Y/n)")"; then
+      GOAHEAD="1"
+    else
+      GOAHEAD="0"
+    fi
+  else
+      GOAHEAD="1"
+      NCHECKALL="0"
+  fi
+  if [ $GOAHEAD == "1" ]; then
     for b in ${@:2}; do
       cd $HOME
       mkdir .aurtool
@@ -307,7 +320,7 @@ if [ "$OP" == -SS ]; then
       if ! sudo pacman -S --needed --noconfirm $m; then
         ctext magenta std "Installing $m using pacman failed!"
         ctext yellow std "Trying to install $m using AUR..."
-        aurtool -S $m
+        NCHECKALL="1" aurtool -S $m
       fi
     done
   else
