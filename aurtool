@@ -295,9 +295,20 @@ if [ "$OP" == -Syu ]; then
     echo "There is nothing to do"
     exit 0
   fi
-  for i in $UPD; do
-    aurtool -S $i
+  for vV in $UPD; do
+    ctext blue nnl "$vV "
   done
+  echo " "
+  echo " "
+  if isyes "$(ctext yellow nnl "Update these AUR packages? (Y/n)")"; then
+    for i in $UPD; do
+      NCHECKALL="1" aurtool -S $i
+    done
+  else
+    ctext magenta std "Aborting"
+    cd $HOME
+    exit 1
+  fi
 fi
 
 if [ "$OP" == -Syyu ]; then
