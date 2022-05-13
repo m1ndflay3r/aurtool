@@ -152,7 +152,7 @@ if ! which package-query &> /dev/null; then
     if ! isyes "$(ctext yellow nnl "Install it now? (Y/n)")"; then
       exit 65
     else
-      PKGQUERYINS="1" aurtool -S package-query
+      PKGQUERYINS="1" NCHECKALL="1" aurtool -S package-query
     fi
   fi
 fi
