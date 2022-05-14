@@ -1,10 +1,10 @@
 # Aurtool
-Simple bash based aur management utility. 
+***Simple bash based aur management utility.***
 
 
 
 
-***this project depends on package-query, which aurtool will install automatically on first run***
+this project depends on package-query, which aurtool will install automatically on first run
 
 
 
