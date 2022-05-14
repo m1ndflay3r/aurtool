@@ -4,7 +4,7 @@ Simple bash based aur management utility.
 
 
 
-***IMPORTANT: This project depends on package-query, which is attainable via the AUR.***
+***IMPORTANT: This project depends on package-query, which aurtool will install automatically on first run***
 
 
 
@@ -20,21 +20,14 @@ Simple bash based aur management utility.
 
 - ``` git clone https://github.com/m1ndflay3r/aurtool ```
 
+- ``` cd aurtool ```
+
 
 <h5>step 2</h5>
 
-- cp aurtool to any location in your PATH, and mark it as executable
+- launch aurtool!
 
-- ``` cp aurtool /bin/ ```
-
-- ``` chmod 755 /bin/aurtool ```
-
-
-<h5>step 3</h5>
-
-- install package-query to enable all functions of aurtool and prevent strange issues
-
-- ``` aurtool -S package-query ```
+- ``` ./aurtool --help ```
 
 
 <h4>Usage:</h4>
@@ -45,9 +38,24 @@ Simple bash based aur management utility.
 - ``` aurtool -S packagename ```
 
 
+- ***-SS*** : install a package, trying pacman first, and AUR if pacman fails.
+
+- ``` aurtool -SS packagename ```
+
+
 - ***-Ss*** : search the AUR for a package by name.
 
 - ``` aurtool -Ss packagename ```
+
+
+- ***-Sss*** : search both repositories and AUR for package by name
+
+- ``` aurtool -Sss packagename ```
+
+
+- ***-R*** : remove a package
+
+- ``` aurtool -R packagename ```
 
 
 - ***-Sy*** : check for updates to installed AUR packages.
@@ -65,4 +73,11 @@ Simple bash based aur management utility.
 - ``` aurtool -Syyu ```
 
 
+- ***--help*** : show help information
 
+- ``` aurtool --help ```
+
+
+- ***--version*** : show versioninfo
+
+- ``` aurtool --version ```
