@@ -30,7 +30,7 @@ LIBDEFLOC=/usr/include/libaurtool
 if [ -f "$LIBDEFLOC" ]; then
   source /usr/include/libaurtool
 else
-  source $STARTDIR/${BASH_SOURCE%/*}/resources/libaurtool
+  source ${BASH_SOURCE%/*}/resources/libaurtool
 fi
 GOAHEAD="0"
 if [ -z "$NCHECKALL" ]; then
