@@ -49,7 +49,9 @@ fi
 VALID=("-S" "-Sy" "-Syu" "-Ss" "--help" "-Syyu" "-Sss" "--version" "-SS" "-R")
 if [ ! -z "$OP" ]; then
   if ! isvalidoperation "$1" ${VALID[@]}; then
-    ctext red std "Error: invalid command!"
+    ctext red nnl "Error: "
+    ctext magenta nnl "$1"
+    ctext red std ": Invalid command!"
     ctext yellow std "Do aurtool --help for help page"
     exit 22
   fi
@@ -81,6 +83,7 @@ function OPERROR {
   fi
 }
 ###
+
 
 ### Script functionality begins here.
 ### Yes, I wrote the functions as if statements.
