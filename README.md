@@ -4,7 +4,9 @@ Simple bash based aur management utility.
 
 
 
-***IMPORTANT: This project depends on package-query, which aurtool will install automatically on first run***
+***this project depends on package-query, which aurtool will install automatically on first run***
+
+
 
 
 
