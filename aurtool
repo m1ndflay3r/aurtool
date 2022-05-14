@@ -18,128 +18,45 @@
 #
 #
 
+
+### initialization steps
+###
 OP=$1
 OPINPUT="${@:2}"
 USR="$(whoami)"
 STARTDIR=$(pwd)
 PATH=$STARTDIR/${BASH_SOURCE%/*}:$PATH
+LIBDEFLOC=/usr/include/libaurtool
+if [ -f "$LIBDEFLOC" ]; then
+  source /usr/include/libaurtool
+else
+  source $STARTDIR/${BASH_SOURCE%/*}/resources/libaurtool
+fi
 GOAHEAD="0"
 if [ -z "$NCHECKALL" ]; then
   NCHECKALL="0"
 fi
+###
 
-# library functions borrowed from lemonlib
-function ctext {
-  # Set colour from $1
-  if [ "$1" == black ]; then
-    tput setaf 0
-  fi
-  if [ "$1" == red ]; then
-    tput setaf 1
-  fi
-  if [ "$1" == green ]; then
-    tput setaf 2
-  fi
-  if [ "$1" == yellow ]; then
-    tput setaf 3
-  fi
-  if [ "$1" == blue ]; then
-    tput setaf 4
-  fi
-  if [ "$1" == magenta ]; then
-    tput setaf 5
-  fi
-  if [ "$1" == cyan ]; then
-    tput setaf 6
-  fi
-  if [ "$1" == white ]; then
-    tput setaf 7
-  fi
-  # Set background colour from $1
-  if [ "$1" == dblack ]; then
-    tput setab 0
-  fi
-  if [ "$1" == dred ]; then
-    tput setab 1
-  fi
-  if [ "$1" == dgreen ]; then
-    tput setab 2
-  fi
-  if [ "$1" == dyellow ]; then
-    tput setab 3
-  fi
-  if [ "$1" == dblue ]; then
-    tput setab 4
-  fi
-  if [ "$1" == dmagenta ]; then
-    tput setab 5
-  fi
-  if [ "$1" == dcyan ]; then
-    tput setab 6
-  fi
-  if [ "$1" == dwhite ]; then
-    tput setab 7
-  fi
-  if [ "$1" == reset ]; then
-    tput sgr 0
-  fi
-  # text method from $2
-  if [ "$2" == std ]; then
-    echo "${@:3}"
-    tput sgr 0
-  fi
-  if [ "$2" == nnl ]; then
-    echo -n "${@:3}"
-    tput sgr 0
-  fi
-  if [ "$2" == std,nres ]; then
-    echo "${@:3}"
-  fi
-  if [ "$2" == nnl,nres ]; then
-    echo -n "${@:3}"
-  fi
-}
 
-function isyes {
-  if [ ! -z "$1" ]; then
-    read -p "$1  " ANSWER
-  else
-    read ANSWER
-  fi
-  if [ -z "$ANSWER" ]; then
-    ANSWER="y"
-  fi
-  if [ $ANSWER == y ] || [ $ANSWER == Y ] || [ $ANSWER == yes ] || [ $ANSWER == Yes ] || [ $ANSWER == YES ]; then
-    yes=0 && return 0
-  else
-    yes=1 && return 1
-  fi
-}
-
-function isvalidresponse {
-  if [ -z "$OP" ]; then
-    ctext red std "Error: aurtool requires input!"
-    ctext yellow std "Do aurtool --help for help page"
-    exit 22
-  fi
-  for i in "${VALID[@]}"; do
-    if echo "$i" | grep "$OP" &> /dev/null; then
-      return 0
-    fi
-  done
-}
-
-# script body
-VALID=("-S" "-Sy" "-Syu" "-Ss" "--help" "-Syyu" "-Sss" "--version" "-SS" "-R")
-if ! isvalidresponse; then
-  ctext red std "Invalid command!"
-  ctext yellow std "Do aurtool --help for help page"
-  exit 22
-fi
-
+### checks for invalid run conditions
+###
 if [ "$USR" == root ]; then
   ctext red std "Error: aurtool cannot be run as root!"
   exit 13
+fi
+
+VALID=("-S" "-Sy" "-Syu" "-Ss" "--help" "-Syyu" "-Sss" "--version" "-SS" "-R")
+if [ ! -z "$OP" ]; then
+  if ! isvalidoperation "$1" ${VALID[@]}; then
+    ctext red std "Error: invalid command!"
+    ctext yellow std "Do aurtool --help for help page"
+    exit 22
+  fi
+else
+  ctext red std "Error: aurtool requires input!"
+  ctext yellow std "Do aurtool --help for help page"
+  exit 22
 fi
 
 if ! which package-query &> /dev/null; then
@@ -159,11 +76,17 @@ fi
 function OPERROR {
   if [ -z "$OPINPUT" ]; then
     ctext red std "Error: $OP requires additional input."
-    ctext yellow std "aurtool --help for help page"
+    ctext yellow std "Do aurtool --help for help page"
     exit 22
   fi
 }
+###
 
+### Script functionality begins here.
+### Yes, I wrote the functions as if statements.
+### No, it does not have any effects on functionality.
+### No, I don't know why I did that. I was high. Get off my back.
+###
 if [ "$OP" == -Ss ]; then
   OPERROR
   package-query -A -s ${@:2}
@@ -217,7 +140,7 @@ if [ "$OP" == -S ]; then
       # Yes, this is a pointless function that uses up 3 lines unnecessarily. The script didn't behave properly without it. Bash has moods, and Brian Fox hates us all.
       #
       function PKGBUILD {
-      if isyes "$(ctext yellow nnl "Would you like to edit the PKGBUILD? (Y/n)")"; then
+      if DEFINVERT="1" isyes "$(ctext yellow nnl "Would you like to edit the PKGBUILD? (y/N)")"; then
         if which nano &> /dev/null; then
           nano ./PKGBUILD
         else
@@ -230,7 +153,7 @@ if [ "$OP" == -S ]; then
             if [ -z "$PKGEDIT" ]; then
               PKGEDIT="NULL"
             fi
-            if [ -v $PKGEDIT ]; then 
+            if [ -v $PKGEDIT ]; then
               $PKGEDIT ./PKGBUILD
             fi
           fi
@@ -288,7 +211,15 @@ if [ "$OP" == -S ]; then
 fi
 
 if [ "$OP" == -Sy ]; then
-  package-query -A -u
+  UPD=$(package-query -A -u)
+  if [ -z "$UPD" ]; then
+    ctext yellow std "No AUR package updates available"
+    exit 0
+  else
+    echo " "
+    ctext blue std "$UPD"
+    echo " "
+  fi
 fi
 
 if [ "$OP" == -Syu ]; then
@@ -386,4 +317,4 @@ if [ "$OP" == --help ]; then
   ctext yellow std "  --version   -   display aurtool version info                                         "
   ctext yellow std " --------------------------------------------------------------------------------------"
 fi
-
+###
