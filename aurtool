@@ -130,7 +130,11 @@ if [ "$OP" == -S ]; then
       cd $HOME
       mkdir .aurtool
       cd .aurtool
-      git clone http://aur.archlinux.org/$b.git
+      if [ $b == dxvk-mingw-git ]; then
+        git clone http://aur.archlinux.org/dxvk-git.git
+      else
+        git clone http://aur.archlinux.org/$b.git
+      fi
       cd $b
       PKGB=./PKGBUILD
       if [ ! -f $PKGB ]; then
