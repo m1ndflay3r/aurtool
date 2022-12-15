@@ -131,11 +131,11 @@ if [ "$OP" == -S ]; then
       mkdir .aurtool
       cd .aurtool
       if [ $b == dxvk-mingw-git ]; then
-        git clone http://aur.archlinux.org/dxvk-git.git
         b="dxvk-git"
-      else
-        git clone http://aur.archlinux.org/$b.git
+      elif [ $b == openrazer-daemon ] || [ $b == openrazer-driver-dkms ] || [ $b == openrazer-meta ] || [ $b == python-openrazer ]; then
+        b="openrazer"
       fi
+      git clone http://aur.archlinux.org/$b.git
       cd $b
       PKGB=./PKGBUILD
       if [ ! -f $PKGB ]; then
