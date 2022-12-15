@@ -132,6 +132,7 @@ if [ "$OP" == -S ]; then
       cd .aurtool
       if [ $b == dxvk-mingw-git ]; then
         git clone http://aur.archlinux.org/dxvk-git.git
+        b="dxvk-git"
       else
         git clone http://aur.archlinux.org/$b.git
       fi
