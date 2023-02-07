@@ -52,12 +52,12 @@ if [ ! -z "$OP" ]; then
     ctext red nnl "Error: "
     ctext magenta nnl "$1"
     ctext red std ": Invalid command!"
-    ctext yellow std "Do aurtool --help for help page"
+    ctext cyan std "Do aurtool --help for help page"
     exit 22
   fi
 else
   ctext red std "Error: aurtool requires input!"
-  ctext yellow std "Do aurtool --help for help page"
+  ctext cyan std "Do aurtool --help for help page"
   exit 22
 fi
 
@@ -67,10 +67,10 @@ if ! which package-query &> /dev/null; then
   fi
   if [ ! $PKGQUERYINS == 1 ]; then
     ctext magenta std "Error: package-query not found in PATH!"
-    if ! isyes "$(ctext yellow nnl "Install it now? (Y/n)")"; then
+    if ! isyes "$(ctext cyan nnl "Install it now? (Y/n)")"; then
       exit 65
     else
-      PKGQUERYINS="1" NCHECKALL="1" aurtool -S package-query
+      PKGQUERYINS="1" NCHECKALL="1" aurtool -SS package-query
     fi
   fi
 fi
@@ -78,10 +78,18 @@ fi
 function OPERROR {
   if [ -z "$OPINPUT" ]; then
     ctext red std "Error: $OP requires additional input."
-    ctext yellow std "Do aurtool --help for help page"
+    ctext cyan std "Do aurtool --help for help page"
     exit 22
   fi
 }
+
+if [ -z "$SILENT" ]; then
+  SILENT=0
+elif [ $SILENT = 1 ]; then
+  NODEL=1
+  NCHECKALL=1
+fi
+
 ###
 
 
@@ -90,24 +98,24 @@ function OPERROR {
 ### No, it does not have any effects on functionality.
 ### No, I don't know why I did that. I was high. Get off my back.
 ###
-if [ "$OP" == -Ss ]; then
-  OPERROR
-  package-query -A -s ${@:2}
-fi
-
 if [ "$OP" == -Sss ]; then
   OPERROR
-  ctext yellow std "---------"
-  ctext yellow std " Non-AUR "
-  ctext yellow std "---------"
-  pacsearch ${@:2}
-  ctext yellow std "---------"
-  ctext yellow std "   AUR   "
-  ctext yellow std "---------"
   package-query -A -s ${@:2}
 fi
 
-if [ "$OP" == -S ]; then
+if [ "$OP" == -Ss ]; then
+  OPERROR
+  ctext cyan std "---------"
+  ctext cyan std " Non-AUR "
+  ctext cyan std "---------"
+  pacsearch ${@:2}
+  ctext cyan std "---------"
+  ctext cyan std "   AUR   "
+  ctext cyan std "---------"
+  package-query -A -s ${@:2}
+fi
+
+if [ "$OP" == -SS ]; then
   OPERROR
   if [ $NCHECKALL == 0 ]; then
     echo " "
@@ -116,7 +124,7 @@ if [ "$OP" == -S ]; then
     done
     echo " "
     echo " "
-    if isyes "$(ctext yellow nnl "Install these packages? (Y/n)")"; then
+    if isyes "$(ctext cyan nnl "Install these packages? (Y/n)")"; then
       GOAHEAD="1"
     else
       GOAHEAD="0"
@@ -148,22 +156,63 @@ if [ "$OP" == -S ]; then
       # Yes, this is a pointless function that uses up 3 lines unnecessarily. The script didn't behave properly without it. Bash has moods, and Brian Fox hates us all.
       #
       function PKGBUILD {
-      if DEFINVERT="1" isyes "$(ctext yellow nnl "Would you like to edit the PKGBUILD? (y/N)")"; then
-        if which nano &> /dev/null; then
-          nano ./PKGBUILD
+      if DEFINVERT="1" isyes "$(ctext cyan nnl "Would you like to edit the PKGBUILD? (y/N)")"; then
+        BINDIRS=(
+          '/bin/'
+          '/sbin/'
+          '/usr/bin/'
+          '/usr/sbin/'
+          '/usr/local/bin/'
+          '/usr/local/sbin/'
+        )
+        TEHNEWSFLAG="0"
+        TAHNOOSFLABG="0"
+        unset KNOWNEDITDIR
+        for i in ${BINDIRS[@]}; do
+          if ls -a $i/nano &> /dev/null; then
+            TEHNEWSFLAG=1
+            KNOWNEDITDIR="$i/nano"
+            break
+          elif ls -a $i/nvim &> /dev/null; then
+            TAHNOOSFLABG=1
+            KNOWNEDITDIR="$i/nvim"
+            break
+          elif ls -a $i/vim &> /dev/null; then
+            TAHNOOSFLABG=1
+            KNOWNEDITDIR="$i/vim"
+            break
+          elif ls -a $i/vi &> /dev/null; then
+            TAHNOOSFLABG=1
+            KNOWNEDITDIR="$i/vi"
+            break
+          fi
+        done
+        if [ -z "$KNOWNEDITDIR" ]; then
+          if which nano &> /dev/null; then
+            KNOWNEDITDIR="$(which nano)"
+          elif which nvim &> /dev/null; then
+            KNOWNEDITDIR="$(which nvim)"
+          elif which vim &> /dev/null; then
+            KNOWNEDITDIR="$(which vim)"
+          elif which vi &> /dev/null; then
+            KNOWNEDITDIR="$(which vi)"
+          fi
+        fi
+        if [ ! -z "$KNOWNEDITDIR" ]; then
+          eval $KNOWNEDITDIR ./PKGBUILD
+        elif ls -a /home/$USER/.aurtool_edit_command &> /dev/null; then
+          KNOWNEDITDIR="$(cat /home/$USER/.aurtool_edit_command)"
+          eval $KNOWNEDITDIR ./PKGBUILD
         else
-          if which vim &> /dev/null; then
-            vim ./PKGBUILD
-          else
-            ctext magenta std "No suitable text editor found!"
-            ctext yellow nnl "If one is present on the system, enter its command now (eg: nano, vim, emacs, etc). Otherwise leave blank to skip PKGBUILD editing: "
-            read PKGEDIT
-            if [ -z "$PKGEDIT" ]; then
-              PKGEDIT="NULL"
-            fi
-            if [ -v $PKGEDIT ]; then
-              $PKGEDIT ./PKGBUILD
-            fi
+          ctext magenta std "No suitable text editor found!"
+          ctext cyan nnl "If one is present on the system, enter its command now (eg: nano, vim, emacs, etc). Otherwise leave blank to skip PKGBUILD editing: "
+          read PKGEDIT
+          if [ -z "$PKGEDIT" ]; then
+            PKGEDIT="true"
+            ctext magenta std "Editor does not exist! skipping PKGBUILD editing for this session"
+          fi
+          if [ -v $PKGEDIT ]; then
+            $PKGEDIT ./PKGBUILD
           fi
         fi
       fi
@@ -182,11 +231,11 @@ if [ "$OP" == -S ]; then
       done
       for i in ${DEPS[@]}; do
         if ! pacman -Ql $i &> /dev/null; then
-          ctext yellow std "Trying to install $i with pacman (dependency)"
+          ctext cyan std "Trying to install $i with pacman (dependency)"
           if ! sudo pacman -S --noconfirm --needed $i; then
             ctext magenta std "Installing $i with pacman failed"
-            ctext yellow std "Trying to install $i from AUR"
-            if ! NODEL="1" NCHECKALL="1" aurtool -S $i; then
+            ctext cyan std "Trying to install $i from AUR"
+            if ! NODEL="1" NCHECKALL="1" aurtool -SS $i; then
               ctext red std "FATAL: Unable to install dependency $i!"
               cd $HOME
               exit 65
@@ -194,7 +243,7 @@ if [ "$OP" == -S ]; then
           fi
         fi
       done
-      if ! makepkg -csi; then
+      if ! makepkg -csi || false; then
         ctext red std "Error! Aborting"
         cd $HOME
         exit 131
@@ -205,7 +254,7 @@ if [ "$OP" == -S ]; then
       NODEL="0"
     fi
     if [ ! "$NODEL" == 1 ]; then
-      if isyes "$(ctext yellow nnl "Build files and / or built packages are stored in .aurtool in your home directory. Would you like to delete them? (Y/n)")"; then
+      if isyes "$(ctext cyan nnl "Build files and / or built packages are stored in .aurtool in your home directory. Would you like to delete them? (Y/n)")"; then
         echo "Cleaning up.."
         cd $HOME
         rm -rf $HOME/.aurtool
@@ -218,10 +267,10 @@ if [ "$OP" == -S ]; then
   fi
 fi
 
-if [ "$OP" == -Sy ]; then
+if [ "$OP" == -Syy ]; then
   UPD=$(package-query -A -u)
   if [ -z "$UPD" ]; then
-    ctext yellow std "No AUR package updates available"
+    ctext cyan std "No AUR package updates available"
     exit 0
   else
     echo " "
@@ -230,7 +279,7 @@ if [ "$OP" == -Sy ]; then
   fi
 fi
 
-if [ "$OP" == -Syu ]; then
+if [ "$OP" == -Syyu ]; then
   UPD=$(package-query -A -u | grep -oP "aur/\K[^ ]*")
   if [ -z "$UPD" ]; then
     echo "There is nothing to do"
@@ -242,9 +291,13 @@ if [ "$OP" == -Syu ]; then
   done
   echo " "
   echo " "
-  if isyes "$(ctext yellow nnl "Update these AUR packages? (Y/n)")"; then
+  if isyes "$(ctext cyan nnl "Update these AUR packages? (Y/n)")"; then
     for i in $UPD; do
-      NCHECKALL="1" aurtool -S $i
+      if [ $SILENT != 1 ]; then
+        NCHECKALL="1" aurtool -SS $i
+      else
+        NCHECKALL="1" NODEL="1" SILENT="1" aurtool -SS $i
+      fi
     done
   else
     echo "Aborting"
@@ -253,14 +306,18 @@ if [ "$OP" == -Syu ]; then
   fi
 fi
 
-if [ "$OP" == -Syyu ]; then
-  ctext yellow std "Updating non-AUR packages..."
+if [ "$OP" == -Syu ]; then
+  ctext cyan std "Updating non-AUR packages..."
   sudo pacman -Syu
-  ctext yellow std "Updating AUR packages..."
-  aurtool -Syu
+  ctext cyan std "Updating AUR packages..."
+  if [ $SILENT == 1 ]; then
+    SILENT=1 aurtool -Syyu
+  else
+    aurtool -Syyu
+  fi
 fi
 
-if [ "$OP" == -SS ]; then
+if [ "$OP" == -S ]; then
   OPERROR
   echo " "
   for dD in ${@:2}; do
@@ -268,13 +325,17 @@ if [ "$OP" == -SS ]; then
   done
   echo " "
   echo " "
-  if isyes "$(ctext yellow nnl "Install these packages? (Y/n)")"; then
+  if isyes "$(ctext cyan nnl "Install these packages? (Y/n)")"; then
     for m in ${@:2}; do
-      ctext yellow std "Trying to install $m using pacman..."
+      ctext cyan std "Trying to install $m using pacman..."
       if ! sudo pacman -S --needed --noconfirm $m; then
         ctext magenta std "Installing $m using pacman failed!"
-        ctext yellow std "Trying to install $m using AUR..."
-        NCHECKALL="1" aurtool -S $m
+        ctext cyan std "Trying to install $m using AUR..."
+        if [ $SILENT != 1 ]; then
+          NCHECKALL="1" aurtool -SS $m
+        else
+          NODEL=1 NCHECKALL="1" SILENT=1 aurtool -SS $m
+        fi
       fi
     done
   else
@@ -292,7 +353,7 @@ if [ "$OP" == -R ]; then
   done
   echo " "
   echo " "
-  if isyes "$(ctext yellow nnl "Remove these packages? (Y/n)")"; then
+  if isyes "$(ctext cyan nnl "Remove these packages? (Y/n)")"; then
     for u in ${@:2}; do
       sudo pacman -R --noconfirm $u
     done
@@ -304,25 +365,34 @@ if [ "$OP" == -R ]; then
 fi
 
 if [ "$OP" == --version ]; then
-  ctext yellow std "aurtool V1.0 RC1"
+  ctext green std "aurtool V1.0 RC2"
 fi
 
 if [ "$OP" == --help ]; then
-  ctext yellow std " --------------------------------------------------------------------------------------"
-  ctext yellow std "                     Aurtool - minimal AUR package management system                   "
-  ctext yellow std " --------------------------------------------------------------------------------------"
-  ctext yellow std "  options:                                                                             "
-  ctext yellow std "  --------                                                                             "
-  ctext yellow std "  -S          -   install an AUR package (or update a single AUR package).             "
-  ctext yellow std "  -SS         -   install a package, trying pacman first, and AUR if pacman fails      "
-  ctext yellow std "  -Sy         -   check for updates to installed AUR packages                          "
-  ctext yellow std "  -Syu        -   install all available updates to AUR packages                        "
-  ctext yellow std "  -Syyu       -   install all available updates to both AUR and non-AUR packages       "
-  ctext yellow std "  -Ss         -   search the AUR for a package by name                                 "
-  ctext yellow std "  -Sss        -   search both repositories and AUR for package by name                 "
-  ctext yellow std "  -R          -   remove a package                                                     "
-  ctext yellow std "  --help      -   display this help dialog                                             "
-  ctext yellow std "  --version   -   display aurtool version info                                         "
-  ctext yellow std " --------------------------------------------------------------------------------------"
+  ctext white std " $(tput bold)--------------------------------------------------------------------------------------"
+  ctext green std " $(tput bold)                   aurtool $(ctext white)-$(ctext cyan) minimal AUR package management system                   "
+  ctext white std " $(tput bold)--------------------------------------------------------------------------------------"
+  ctext green std "    $(tput bold)options$(ctext white):                                                                             "
+  ctext white std "    $(tput bold)--------                                                                             "
+  ctext cyan std "       $(tput bold)$(ctext magenta)-SS $(ctext white)         -   install an AUR package (or update a single AUR package).             "
+  ctext cyan std "       $(tput bold)$(ctext magenta)-S $(ctext white)          -   install a package, trying pacman first, and AUR if pacman fails      "
+  ctext cyan std "       $(tput bold)$(ctext magenta)-Sy $(ctext white)         -   check for updates to installed AUR packages                          "
+  ctext cyan std "       $(tput bold)$(ctext magenta)-Syyu  $(ctext white)      -   install all available updates to AUR packages                        "
+  ctext cyan std "       $(tput bold)$(ctext magenta)-Syu  $(ctext white)       -   install all available updates to both AUR and non-AUR packages       "
+  ctext cyan std "       $(tput bold)$(ctext magenta)-Sss $(ctext white)        -   search the AUR for a package by name                                 "
+  ctext cyan std "       $(tput bold)$(ctext magenta)-Ss $(ctext white)         -   search both repositories and AUR for package by name                 "
+  ctext cyan std "       $(tput bold)$(ctext magenta)-R $(ctext white)          -   remove a package                                                     "
+  ctext cyan std "       $(tput bold)$(ctext magenta)--help $(ctext white)      -   display this help dialog                                             "
+  ctext cyan std "       $(tput bold)$(ctext magenta)--version $(ctext white)   -   display aurtool version info                                         "
+  echo ""
+  ctext white std " $(tput bold)--------------------------------------------------------------------------------------"
+  ctext green std "             $(tput bold)               environment flags                                          "
+  echo ""
+  ctext cyan std "    $(tput bold)   $(ctext yellow)NCHECKALL=1 $(ctext white)-$(ctext cyan) disable PKGBUILD edit prompt and \"are you sure\" prompts           "
+  ctext cyan std "    $(tput bold)   $(ctext yellow)    NODEL=1 $(ctext white)-$(ctext cyan) disable prompting user to delete built package after installation   "
+  ctext cyan std "    $(tput bold)   $(ctext yellow)   SILENT=1 $(ctext white)-$(ctext cyan) enable both of the above                                            "
+  echo ""
+  ctext blue std "            $(tput bold)    $(ctext green)ex$(ctext white) -$(ctext blue) SILENT=1 aurtool -S wine-staging-git                                      "
+  ctext white std " $(tput bold)--------------------------------------------------------------------------------------"
 fi
 ###
