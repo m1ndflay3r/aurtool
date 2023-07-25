@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 #
-#  Aurtool V1.0 RC1
+#  Aurtool V1.0.1
 #
 #  Maintainer: Eris Nihila (M1ndFlay3r)
 #              sp0t1fyfr33tr1alabus3@outlook.com
@@ -38,8 +38,16 @@ if [ -z "$NCHECKALL" ]; then
 fi
 ###
 
+###
+### env normalization 
+###
+PATH=/usr/bin:$PATH
+if which gcc &> /dev/null; then
+  CC='gcc'
+  CXX='g++'
+fi
 
-### checks for invalid run conditions
+### check run conditions
 ###
 if [ "$USR" == root ]; then
   ctext red std "Error: aurtool cannot be run as root!"
@@ -282,7 +290,7 @@ fi
 if [ "$OP" == -Syyu ]; then
   UPD=$(package-query -A -u | grep -oP "aur/\K[^ ]*")
   if [ -z "$UPD" ]; then
-    echo "There is nothing to do"
+    echo " there is nothing to do"
     exit 0
   fi
   echo " "
